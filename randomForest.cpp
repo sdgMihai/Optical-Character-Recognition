@@ -13,10 +13,41 @@ using std::mt19937;
 
 vector<vector<int>> get_random_samples(const vector<vector<int>> &samples,
                                        int num_to_return) {
-    // TODO(you)
-    // Intoarce un vector de marime num_to_return cu elemente random,
-    // diferite din samples
+    // generator de numere random
+    mt19937 rng;
+    int i;
+    // adaugarea unui seed random
+    rng.seed(std::random_device()());
+    int size = samples.size();  // dimensiunea matricei samples
+    // distributie in intervalul [0, size-1]
+    std::uniform_int_distribution<mt19937::result_type> dist(0, size - 1);
+
     vector<vector<int>> ret;
+    /*
+    // vectorul alreadyAdded are grija de cazurile in care
+    // o anumita linie a fost adaugata deja.
+    // alreadyAdded[i] e 0 daca linia i nu a mai fost adaugata
+    // si 0 altfel
+    */
+    vector<bool> alreadyAdded(size, 0);
+
+    for (i = 0; i < num_to_return; i++) {
+        // generarea unui index random
+        int idx = dist(rng);
+
+        if (alreadyAdded[idx] == 0) {
+            ret.push_back(samples[idx]);
+            alreadyAdded[idx] = 1;
+        } else {
+            /*
+            // daca gasim o linie care a mai fost deja adaugata
+            // atuncim mai adaugam inca o linie de generat
+            */
+            num_to_return++;
+            continue;
+        }
+    }
+
     return ret;
 }
 
