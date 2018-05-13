@@ -7,10 +7,10 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include <string>
 
 using std::string;
 using std::pair;
@@ -35,7 +35,7 @@ void Node::make_decision_node(const int index, const int val) {
 
 void Node::make_leaf(const vector<vector<int>> &samples,
                      const bool is_single_class) {
-    // TODO(you)
+    is_leaf = true;
     // Seteaza nodul ca fiind de tip frunza (modificati is_leaf si result)
     // is_single_class = true -> toate testele au aceeasi clasa (acela e result)
     // is_single_class = false -> se alege clasa care apare cel mai des
@@ -69,10 +69,22 @@ int Node::predict(const vector<int> &image) const {
 }
 
 bool same_class(const vector<vector<int>> &samples) {
-    // TODO(you)
     // Verifica daca testele primite ca argument au toate aceeasi
     // clasa(rezultat). Este folosit in train pentru a determina daca
     // mai are rost sa caute split-uri
+
+    int i;
+    /*
+    // caut prin toate sample-urile
+    // iar daca gasesc 2 sample-uri consecutive de clase diferite
+    // functia intoarce false
+    // daca toate au aceeasi clasa atunci va intoarce true
+    */
+    for (i = 0; i < samples.size() - 1; i++)
+        if (samples[i][0] != samples[i + 1][0])
+            return false;
+
+    return true;
 }
 
 float get_entropy(const vector<vector<int>> &samples) {
