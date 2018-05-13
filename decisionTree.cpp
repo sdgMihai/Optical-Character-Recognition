@@ -69,6 +69,7 @@ int Node::predict(const vector<int> &image) const {
 }
 
 bool same_class(const vector<vector<int>> &samples) {
+    // TODO(you)
     // Verifica daca testele primite ca argument au toate aceeasi
     // clasa(rezultat). Este folosit in train pentru a determina daca
     // mai are rost sa caute split-uri
@@ -108,10 +109,24 @@ float get_entropy_by_indexes(const vector<vector<int>> &samples,
 }
 
 vector<int> compute_unique(const vector<vector<int>> &samples, const int col) {
-    // TODO(you)
     // Intoarce toate valorile (se elimina duplicatele)
     // care apar in setul de teste, pe coloana col
+    int i;
     vector<int> uniqueValues;
+
+    /*
+    // parcurge toata coloana 'col', iar inainte de a adauga un element
+    // il cauta in vectorul uniqueValues pentru a nu exista dubluri
+    // in caz ca a gasit elementul, atunci nu il mai adauga
+    */
+    for (i = 0; i < samples.size(); i++) {
+        auto start = uniqueValues.begin();
+        auto finish = uniqueValues.end();
+        auto it = std::find(start, finish, samples[i][col]);
+        if (it == finish)  // adica elementul nu a mai fost adaugat inainte
+            uniqueValues.push_back(samples[i][col]);  // il adaug in vector
+    }
+
     return uniqueValues;
 }
 
