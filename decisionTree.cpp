@@ -7,6 +7,7 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <random>
 #include <string>
 #include <unordered_map>
 #include <utility>
@@ -17,6 +18,7 @@ using std::pair;
 using std::vector;
 using std::unordered_map;
 using std::make_shared;
+using std::mt19937;
 
 // structura unui nod din decision tree
 // splitIndex = dimensiunea in functie de care se imparte
@@ -168,9 +170,35 @@ pair<vector<int>, vector<int>> get_split_as_indexes(
 }
 
 vector<int> random_dimensions(const int size) {
-    // TODO(you)
     // Intoarce sqrt(size) dimensiuni diferite pe care sa caute splitul maxim
     // Precizare: Dimensiunile gasite sunt > 0 si < size
+
+
     vector<int> rez;
+    mt19937 rng;  // generator de numere random
+    int i;
+    rng.seed(std::random_device()());  // adaugarea unui seed random
+    int dim = sqrt(size);
+    // distributie in intervalul [1, size-1]
+    std::uniform_int_distribution<mt19937::result_type> dist(1, size - 1);
+    vector<bool> alreadyAdded(size, 0);
+
+    /*
+    // Generam numere random si verificam daca au mai fost deja adaugate
+    // folosind vectorul alreadyAdded.
+    // Daca au mai fost adaugate, atunci incrementam valoarea lui dim
+    // pentru a mai face inca o cautare.
+    */
+    for (i = 0; i < dim; i++) {
+        int idx = dist(rng);
+
+        if (alreadyAdded[idx] == 0) {
+            rez.push_back(idx);
+            alreadyAdded[idx] = 1;
+        }
+        else
+            dim++;
+    }
+
     return rez;
 }
