@@ -147,10 +147,23 @@ pair<vector<vector<int>>, vector<vector<int>>> split(
 pair<vector<int>, vector<int>> get_split_as_indexes(
     const vector<vector<int>> &samples, const int split_index,
     const int split_value) {
-    // TODO(you)
     // Intoarce indecsii sample-urilor din cele 2 subseturi obtinute in urma
     // separarii in functie de split_index si split_value
     vector<int> left, right;
+    int i;
+
+    /*
+    // se parcurge toata coloan split_index
+    // si sunt creati cei doi vectori, left si right
+    // in functie de split_index si split_values
+    */
+    for (i = 0; i < samples.size(); i++) {
+        if (samples[i][split_index] <= split_value)
+            left.push_back(i);
+        else
+            right.push_back(i);
+    }
+
     return make_pair(left, right);
 }
 
