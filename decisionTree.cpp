@@ -52,6 +52,32 @@ pair<int, int> find_best_split(const vector<vector<int>> &samples,
     // pair-ul intors este format din (split_index, split_value)
 
     int splitIndex = -1, splitValue = -1;
+	double info_gain = INT_MIN;
+	// aleg sqrt(nrdim)
+	vector<int> rand_dim = random_dimensions(samples.size());
+	// aflu valorile unice pt fiecare dimesiune si le verific
+	for (int i = 0; i < rand_dim.size(); ++i) {
+		int index = rand_dim[i];
+		vector<int> split_values = compute_unique(samples, index);
+
+		for (int j = 0; j < split_values.size(); ++j) {
+			double info_gain_j;
+			double parent_entropy = get_entropy_by_indexes(samples, rand_dim);
+			auto ans = get_split_as_indexes(samples, index, split_values[j]);
+			double child1_entropy = get_entropy_by_indexes(samples, ans.first);
+			double child2_entropy = get_entropy_by_indexes(samples, ans.second);
+			double children_entropy =
+				(ans.first.size() * child1_entropy + ans.second.size() * child2_entropy)
+				/ (ans.first.size() + ans.second.size());
+			info_gain_j = parent_entropy - children_entropy;
+			if (info_gain_j > info_gain) {
+				info_gain = info_gain_j;
+				splitIndex = index;
+				splitValue = split_values[j];
+			}
+		}
+	}
+
     return pair<int, int>(splitIndex, splitValue);
 }
 
@@ -107,7 +133,8 @@ float get_entropy_by_indexes(const vector<vector<int>> &samples,
     // Intoarce entropia subsetului din setul de teste total(samples)
     // Cu conditia ca subsetul sa contina testele ale caror indecsi se gasesc in
     // vectorul index (Se considera doar liniile din vectorul index)
-    /*
+
+	/*
 	// parcurg liniile desemnate de vectorul index
 	// calculez frecventa aparitiei fiecarui numar
 	*/
@@ -117,7 +144,7 @@ float get_entropy_by_indexes(const vector<vector<int>> &samples,
 		frec[samples[i][0]]++;
 	}
 	// aplic formula entropiei
-	for (i = 0; i < 10; ++i) {
+	for (int i = 0; i < 10; ++i) {
 		double probI = (frec[i] / index.size());
 		if (frec[i])
 			entropy += probI * log2(probI);
