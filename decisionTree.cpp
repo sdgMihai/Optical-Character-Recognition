@@ -38,6 +38,21 @@
 	void Node::make_leaf(const vector<vector<int>> &samples,
 						 const bool is_single_class) {
 		is_leaf = true;
+		if (is_single_class == true) {
+			result = samples[0][0];
+		}
+		else {
+			int frec[10] = { 0 };
+			for (int i = 0; i < samples.size(); ++i) {
+				frec[samples[i][0]]++;
+			}
+			int maxim = frec[0];
+			for (int i = 1; i < 10; ++i) {
+				if (maxim < frec[i])
+					maxim = frec[i];
+			}
+			result = maxim;
+		}
 		// Seteaza nodul ca fiind de tip frunza (modificati is_leaf si result)
 		// is_single_class = true -> toate testele au aceeasi clasa (acela e result)
 		// is_single_class = false -> se alege clasa care apare cel mai des
