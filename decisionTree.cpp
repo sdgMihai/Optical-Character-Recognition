@@ -72,10 +72,13 @@
 		// ca sa gasesc cazul de imposibilitate a split-ului
 		*/
 		double info_gain = 0;
-		// aleg sqrt(nrdim)
+		// aleg sqrt(nrdimensiuni) dimensiuni random
 		vector<int> rand_dim = random_dimensions(samples.size());
 		// aflu valorile unice pt fiecare dimesiune si le verific
 		for (int i = 0; i < rand_dim.size(); ++i) {
+			// verific perechile splitIndex = rand_dim[i] cu 
+			// oricare splitValue din cele existente in coloana
+			// care e procesata
 			int index = rand_dim[i];
 			vector<int> split_values = compute_unique(samples, index);
 
@@ -89,7 +92,7 @@
 					(ans.first.size() * child1_entropy + ans.second.size() * child2_entropy)
 					/ (ans.first.size() + ans.second.size());
 				info_gain_j = parent_entropy - children_entropy;
-				if (info_gain_j > info_gain) {
+				if (info_gain_j > info_gain && info_gain_j > 0) {
 					info_gain = info_gain_j;
 					splitIndex = index;
 					splitValue = split_values[j];
@@ -110,13 +113,17 @@
 		// Daca da, acest nod devine frunza, altfel continua algoritmul.
 		// 2) Daca nu exista niciun split valid, acest nod devine frunza. Altfel,
 		// ia cel mai bun split si continua recursiv
+
+		// cazul 1)
 		if (same_class(samples)) {
-			make_leaf(samples, 1);
-		} else {  // verificam posibilitatea si daca exista
-			// facem split
+			make_leaf(samples, true);
+		} else {  //cazul 2)
+			// verificam posibilitatea de a face split
+			// si daca exista facem split
 			vector<int> dimensions;
+			dimensions.clear();
 			for (int i = 0; i < samples[0].size(); ++i)
-				dimensions[i] = i;
+				dimensions.push_back(i);
 			pair<int, int> ans = find_best_split(samples, dimensions);
 			if (ans.first == -2 && ans.second == -1) {
 				// este imposibil sa facem split
@@ -182,7 +189,15 @@
 		// vectorul index (Se considera doar liniile din vectorul index)
 
 		/*
+		// handle exception
+		// index is empty
+		*/
+		if (index.empty())
+			return -1;
+
+		/*
 		// parcurg liniile desemnate de vectorul index
+		// obtin numarul rep. de sample[i]
 		// calculez frecventa aparitiei fiecarui numar
 		*/
 		int frec[10] = { 0 };
