@@ -107,7 +107,22 @@ float get_entropy_by_indexes(const vector<vector<int>> &samples,
     // Intoarce entropia subsetului din setul de teste total(samples)
     // Cu conditia ca subsetul sa contina testele ale caror indecsi se gasesc in
     // vectorul index (Se considera doar liniile din vectorul index)
-    return 0.0f;
+    /*
+	// parcurg liniile desemnate de vectorul index
+	// calculez frecventa aparitiei fiecarui numar
+	*/
+	int frec[10] = { 0 };
+	double entropy = 0;
+	for (int i = 0; i < samples.size(); ++i) {
+		frec[samples[i][0]]++;
+	}
+	// aplic formula entropiei
+	for (i = 0; i < 10; ++i) {
+		double probI = (frec[i] / index.size());
+		if (frec[i])
+			entropy += probI * log2(probI);
+	}
+    return entropy;
 }
 
 vector<int> compute_unique(const vector<vector<int>> &samples, const int col) {
