@@ -67,6 +67,10 @@
 		// pair-ul intors este format din (split_index, split_value)
 
 		int splitIndex = -1, splitValue = -1;
+		/*
+		// am inlocuit din versiunea anterioara INT_MIN cu 0
+		// ca sa gasesc cazul de imposibilitate a split-ului
+		*/
 		double info_gain = INT_MIN;
 		// aleg sqrt(nrdim)
 		vector<int> rand_dim = random_dimensions(samples.size());
@@ -106,6 +110,25 @@
 		// Daca da, acest nod devine frunza, altfel continua algoritmul.
 		// 2) Daca nu exista niciun split valid, acest nod devine frunza. Altfel,
 		// ia cel mai bun split si continua recursiv
+		if (same_class(samples)) {
+			make_leaf(samples, 1);
+		} else {  // verificam posibilitatea si daca exista
+			// facem split
+			vector<int> dimensions;
+			for (int i = 0; i < samples[0].size(); ++i)
+				dimensions[i] = i;
+			pair<int, int> ans = find_best_split(samples, dimensions);
+			if (ans.first == -2 && ans.second == -1) {
+				// este imposibil sa facem split
+				make_leaf(samples, false);
+			} else {
+				// obtin split pe setul de date
+				auto recursion = split(samples, ans.first, ans.second);
+				// antrenez copii recursiv
+				this->left->train(recursion.first);
+				this->right->train(recursion.second);
+			}
+		}
 	}
 
 	int Node::predict(const vector<int> &image) const {
