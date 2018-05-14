@@ -38,10 +38,10 @@
 	void Node::make_leaf(const vector<vector<int>> &samples,
 						 const bool is_single_class) {
 		is_leaf = true;
-		if (is_single_class == true) {
+		if (is_single_class == true) {  // result = samples[0][i], oricare i
 			result = samples[0][0];
-		}
-		else {
+		} else {  // aleg clasa care apare cel mai des
+			// folosesc vectori de frecventa
 			int frec[10] = { 0 };
 			for (int i = 0; i < samples.size(); ++i) {
 				frec[samples[i][0]]++;
@@ -71,7 +71,7 @@
 		// am inlocuit din versiunea anterioara INT_MIN cu 0
 		// ca sa gasesc cazul de imposibilitate a split-ului
 		*/
-		double info_gain = INT_MIN;
+		double info_gain = 0;
 		// aleg sqrt(nrdim)
 		vector<int> rand_dim = random_dimensions(samples.size());
 		// aflu valorile unice pt fiecare dimesiune si le verific
@@ -98,7 +98,7 @@
 		}
 
 		// in faza de utilizare
-		//indecsii scad cu 1
+		// indecsii scad cu 1
 		splitIndex--;
 		return pair<int, int>(splitIndex, splitValue);
 	}
@@ -136,10 +136,11 @@
 		// Intoarce rezultatul prezis de catre decision tree
 		if (is_leaf) {
 			return result;
-		} else if(image[split_index] <= split_value) {
+		} else if (image[split_index] <= split_value) {
 			return this->left->predict(image);
-		} else return this->right->predict(image);
-		return 0;
+		}
+		else
+			return this->right->predict(image);
 	}
 
 	bool same_class(const vector<vector<int>> &samples) {
