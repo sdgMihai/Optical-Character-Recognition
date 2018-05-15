@@ -76,7 +76,7 @@
 		vector<int> rand_dim = random_dimensions(samples.size());
 		// aflu valorile unice pt fiecare dimesiune si le verific
 		for (int i = 0; i < rand_dim.size(); ++i) {
-			// verific perechile splitIndex = rand_dim[i] cu 
+			// verific perechile splitIndex = rand_dim[i] cu
 			// oricare splitValue din cele existente in coloana
 			// care e procesata
 			int index = rand_dim[i];
@@ -117,7 +117,7 @@
 		// cazul 1)
 		if (same_class(samples)) {
 			make_leaf(samples, true);
-		} else {  //cazul 2)
+		} else {  // cazul 2)
 			// verificam posibilitatea de a face split
 			// si daca exista facem split
 			vector<int> dimensions;
@@ -202,8 +202,8 @@
 		*/
 		int frec[10] = { 0 };
 		double entropy = 0;
-		for (int i = 0; i < samples.size(); ++i) {
-			frec[samples[i][0]]++;
+		for (int i = 0; i < index.size(); ++i) {
+			frec[samples[index[i]][0]]++;
 		}
 		// aplic formula entropiei
 		for (int i = 0; i < 10; ++i) {
