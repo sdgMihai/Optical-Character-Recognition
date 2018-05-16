@@ -86,7 +86,9 @@
 
 			for (int j = 0; j < split_values.size(); ++j) {
 				double info_gain_j;
-				double parent_entropy = get_entropy_by_indexes(samples, dimensions);
+				vector<int> indexes;
+				indexes = random_dimensions(samples.size());
+				double parent_entropy = get_entropy_by_indexes(samples, indexes);
 				auto ans = get_split_as_indexes(samples, index, split_values[j]);
 				double child1_entropy = get_entropy_by_indexes(samples, ans.first);
 				double child2_entropy = get_entropy_by_indexes(samples, ans.second);
@@ -167,6 +169,10 @@
 		// mai are rost sa caute split-uri
 
 		int i;
+		if (samples.size() == 0)
+			return 0;
+		if (samples.size() == 1)
+			return 1;
 		/*
 		// caut prin toate sample-urile
 		// iar daca gasesc 2 sample-uri consecutive de clase diferite
