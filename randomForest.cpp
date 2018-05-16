@@ -88,9 +88,13 @@ int RandomForest::predict(const vector<int> &image) {
         frec[a]++;
     }
     int maxim = frec[0];
+    int idx = 0;
     for (int i = 1; i < 10; ++i) {
-        if (maxim < frec[i])
+        if (maxim < frec[i]) {
             maxim = frec[i];
+            idx = i;
+        }
     }
-    return maxim;
+    // std::cout<<idx<<" ";
+    return idx;
 }

@@ -47,11 +47,14 @@
 				frec[samples[i][0]]++;
 			}
 			int maxim = frec[0];
+			int idx = 0;
 			for (int i = 1; i < 10; ++i) {
-				if (maxim < frec[i])
+				if (maxim < frec[i]) {
 					maxim = frec[i];
+					idx = i;
+				}
 			}
-			result = maxim;
+			result = idx;
 		}
 		// Seteaza nodul ca fiind de tip frunza (modificati is_leaf si result)
 		// is_single_class = true -> toate testele au aceeasi clasa (acela e result)
@@ -71,38 +74,39 @@
 		// am inlocuit din versiunea anterioara INT_MIN cu 0
 		// ca sa gasesc cazul de imposibilitate a split-ului
 		*/
-		double info_gain = 0;
-		// aleg sqrt(nrdimensiuni) dimensiuni random
-		vector<int> rand_dim = random_dimensions(samples.size());
+		double info_gain = 0.0;
+
 		// aflu valorile unice pt fiecare dimesiune si le verific
-		for (int i = 0; i < rand_dim.size(); ++i) {
-			// verific perechile splitIndex = rand_dim[i] cu
+		for (int i = 0; i < dimensions.size(); ++i) {
+			// verific perechile splitIndex = dimensions[i] cu
 			// oricare splitValue din cele existente in coloana
 			// care e procesata
-			int index = rand_dim[i];
+			int index = dimensions[i];
 			vector<int> split_values = compute_unique(samples, index);
 
 			for (int j = 0; j < split_values.size(); ++j) {
 				double info_gain_j;
-				double parent_entropy = get_entropy_by_indexes(samples, rand_dim);
+				double parent_entropy = get_entropy_by_indexes(samples, dimensions);
 				auto ans = get_split_as_indexes(samples, index, split_values[j]);
 				double child1_entropy = get_entropy_by_indexes(samples, ans.first);
 				double child2_entropy = get_entropy_by_indexes(samples, ans.second);
-				double children_entropy =
-					(ans.first.size() * child1_entropy + ans.second.size() * child2_entropy)
-					/ (ans.first.size() + ans.second.size());
-				info_gain_j = parent_entropy - children_entropy;
-				if (info_gain_j > info_gain && info_gain_j > 0) {
-					info_gain = info_gain_j;
-					splitIndex = index;
-					splitValue = split_values[j];
+				if (ans.first.size() != 0 && ans.second.size() != 0){
+					double children_entropy =
+						(ans.first.size() * child1_entropy + ans.second.size() * child2_entropy)
+						/ (ans.first.size() + ans.second.size());
+					info_gain_j = parent_entropy - children_entropy;
+					if (info_gain_j > info_gain) {
+						info_gain = info_gain_j;
+						splitIndex = index;
+						splitValue = split_values[j];
+					}
 				}
 			}
 		}
 
 		// in faza de utilizare
 		// indecsii scad cu 1
-		splitIndex--;
+		// splitIndex--;
 		return pair<int, int>(splitIndex, splitValue);
 	}
 
@@ -121,18 +125,24 @@
 			// verificam posibilitatea de a face split
 			// si daca exista facem split
 			vector<int> dimensions;
-			dimensions.clear();
-			for (int i = 0; i < samples[0].size(); ++i)
-				dimensions.push_back(i);
+			// for (int i = 0; i < samples[0].size(); ++i)
+			// dimensions.push_back(i);
+			dimensions = random_dimensions(samples[0].size());
 			pair<int, int> ans = find_best_split(samples, dimensions);
-			if (ans.first == -2 && ans.second == -1) {
+			if (ans.second == -1) {
 				// este imposibil sa facem split
 				make_leaf(samples, false);
 			} else {
 				// obtin split pe setul de date
 				auto recursion = split(samples, ans.first, ans.second);
+				split_index = ans.first;
+				split_value = ans.second;
 				// antrenez copii recursiv
+				if (left == NULL)
+					left = make_shared<Node>();
 				this->left->train(recursion.first);
+				if (right == NULL)
+					right = make_shared<Node>();
 				this->right->train(recursion.second);
 			}
 		}
@@ -143,7 +153,7 @@
 		// Intoarce rezultatul prezis de catre decision tree
 		if (is_leaf) {
 			return result;
-		} else if (image[split_index] <= split_value) {
+		} else if (image[split_index-1] <= split_value) {
 			return this->left->predict(image);
 		}
 		else
@@ -207,10 +217,11 @@
 		}
 		// aplic formula entropiei
 		for (int i = 0; i < 10; ++i) {
-			double probI = (frec[i] / index.size());
+			double probI = 1.0*frec[i] / index.size();
 			if (frec[i])
-				entropy += probI * log2(probI);
+				entropy = entropy - probI * log2(probI);
 		}
+		// std::cout<<entropy<<" ";
 		return entropy;
 	}
 
