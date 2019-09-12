@@ -4,7 +4,7 @@ Optical Character recognition(Tema 3)
 	Simplified version of Random Forest algorithm. It has two phases, a learning phase
 	when the forests are being made, feeding the project with samples and a second one,
 	predicting the value represented by the picture. The purpose of the program is
-	to succesfully detect the letter represented by the image(0-9).
+	to successfully detect the letter represented by the image(0-9).
 	
 
 	Trasca Andrei implemented(alone):
